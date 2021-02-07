@@ -1,0 +1,4 @@
+---
+:verbose: true
+:queues:
+  - [create-queue, 10]
