@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Waypoint</title>
+    <%= csrf_meta_tags %>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.css" rel="stylesheet" />
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.5.1/mapbox-gl-geocoder.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.5.1/mapbox-gl-geocoder.css"
+      type="text/css"
+    />
+  </head>
+  <style>
+    body {
+      height: 10%;
+      background-color: rgb(231, 231, 231);
+    }
+
+    .container {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      justify-content: space-between;
+      padding-top: 3%;
+    }
+
+    .container .selector {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex-wrap: nowrap;
+      border: 3px solid rgb(185, 185, 185);
+      padding: 2% 2% 2% 2%;
+      max-height: 700px;
+      overflow-y: scroll;
+    }
+
+    .selector span {
+      display: flex;
+      flex-direction: column;
+      flex-wrap: wrap;
+      width: 100%;
+      font-size: 40px;
+      align-items: center;
+      font-weight: bolder;
+      padding-bottom: 25px;
+    }
+
+    .selector .vehicles-info {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      width: 100%;
+      padding: 2% 2% 2% 2%;
+      align-items: center;
+      border: 2px solid rgb(69, 69, 69);
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .vehicles-info .vehicle{
+      display: flex;
+      flex-direction: column;
+      flex-wrap: nowrap;
+      width: 18%;
+      padding: 2% 2% 2% 2%;
+      align-items: center;
+      border: 2px solid rgb(69, 69, 69);
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .vehicles-info .vehicle-map{
+      display: flex;
+      flex-direction: column;
+      width: 82%;
+      padding: 2% 2% 2% 2%;
+      align-items: center;
+      border: 2px solid rgb(69, 69, 69);
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+      top: 0;
+      bottom: 0;
+    }
+
+    .vehicle .code {
+      font-size: 30px;
+      font-weight: 600;
+      padding-bottom: 20px;
+    }
+
+    .vehicle .coordinates {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+    }
+
+    .coordinates div {
+      margin: 5px;
+      padding: 10px;
+    }
+
+    .vehicle .date {
+      font-weight: 600;
+      padding-bottom: 20px;
+    }
+
+    .title span {
+      border-bottom: 1px solid rgb(185, 185, 185);
+    }
+
+    .map {
+      width: 92%;
+      height: 178px;
+      display: list-item;
+    }
+
+    .marker {
+      background-image: image_url('app/assets/images/marker.png');
+      background-size: cover;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .mapboxgl-popup {
+      max-width: 200px;
+    }
+
+    .mapboxgl-popup-content {
+      text-align: center;
+      font-family: 'Open Sans', sans-serif;
+    }
+  </style>
+
+  <body>
+    <div class="container">
+      <div class="selector">
+        <span>Vehículos</span>
+        <%
+        @vehicles.each do |vehicle|
+          latitude = vehicle.last_coordinates.latitude.to_s
+          longitute = vehicle.last_coordinates.longitude.to_s
+          sent_at = vehicle.last_coordinates.sent_at.strftime("%d/%m/%Y")
+        %>
+        <div class="vehicles-info">
+          <div class="vehicle" >
+            <div class="code"><%= vehicle.code %></div>
+            <div class="coordinates">
+              <div>Longitud: <%= longitute %></div>
+              <div>Latitud: <%=latitude%></div>
+            </div>
+            <div class="date">Fecha de actualización: <%= sent_at %></div>
+          </div>
+          <div class="vehicle-map">
+            <div class="map" id="map-<%= vehicle.code %>" style="width: 100%;%;height: 178px;display: list-item;"></div>
+          </div>
+        </div>
+        <script>
+          mapboxgl.accessToken = "<%=ENV['map_box_api_key']%>"
+          var map = new mapboxgl.Map({
+            container: 'map-<%= vehicle.code %>',
+            style: 'mapbox://styles/mapbox/streets-v11',
+            center: [<%=latitude%>, <%=longitute%>],
+            zoom: 13
+          })
+          var marker = new mapboxgl.Marker()
+            .setLngLat([<%= latitude %>, <%= longitute%>])
+            .addTo(map);
+        </script>
+        <% end %>
+      </div>
+    </div>
+  </body>
+</html>
