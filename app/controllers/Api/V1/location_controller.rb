@@ -5,21 +5,27 @@ module Api
       before_action :location_params
 
       def create
-        if location_params.permitted?
-          CoordinateReceiverWorker.perform_async(location_params.to_hash)
-          head :ok, content_type: 'text/html'
+        if location_params
+          CoordinateReceiverWorker.perform_async(location_params)
+          render json: { success: 'Location created' }, status: :ok
         else
-          render json: { error: location_params[:location] }
+          render json: {
+            error: 'Invalid body parameters'
+          }, status: :bad_request
         end
       end
 
       private
 
       def location_params
-        params.require(:location).permit(:latitude,
-                                         :longitude,
-                                         :sent_at,
-                                         :vehicle_identifier)
+        locations = params['location']
+
+        return unless locations.key?('latitude')
+        return unless locations.key?('longitude')
+        return unless locations.key?('sent_at')
+        return unless locations.key?('vehicle_identifier')
+
+        locations
       end
     end
   end
