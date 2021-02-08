@@ -1,24 +1,19 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+### To run
 
-Things you may want to cover:
+- get mapbox token [Mapbox Account tokens](https://account.mapbox.com/)
 
-* Ruby version
+- run cp config/application.yml.example config/application.yml
 
-* System dependencies
+- run rake db:create
 
-* Configuration
+- run rake db:migrate
 
-* Database creation
+- run rake db:seed
 
-* Database initialization
+- set up redis with `redis-server`
 
-* How to run the test suite
+- run foreman start
 
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+- to see documentation go to http://localhost:3000/api-docs
