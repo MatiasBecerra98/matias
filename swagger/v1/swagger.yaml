@@ -1,0 +1,34 @@
+---
+openapi: 3.0.1
+info:
+  title: Locations API
+  version: v1
+paths:
+  "/api/v1/gps":
+    post:
+      summary: Create a new Vehicle Location
+      tags:
+      - Vehicle Locations
+      parameters: []
+      responses:
+        '204':
+          description: location created
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                latitude:
+                  type: string
+                longitude:
+                  type: string
+                sent_at:
+                  type: string
+                vehicle_identifier:
+                  type: string
+              required:
+              - latitude
+              - longitude
+              - sent_at
+              - vehicle_identifier
